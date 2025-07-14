@@ -1,11 +1,6 @@
--- Create database
-CREATE DATABASE asset_management;
 
--- Connect to the database
-\c asset_management
-
--- Create requests table
-CREATE TABLE requests (
+-- Create requests table directly in asset_management (default DB from docker-compose)
+CREATE TABLE IF NOT EXISTS requests (
     id BIGSERIAL PRIMARY KEY,
     employee_id VARCHAR(7) NOT NULL CHECK (employee_id ~ '^ATS0(?!000)\d{3}$'),
     asset_type VARCHAR(50) NOT NULL CHECK (asset_type IN (
@@ -13,7 +8,7 @@ CREATE TABLE requests (
         'headphones', 'chair', 'phone', 'tablet'
     )),
     reason TEXT NOT NULL CHECK (
-        reason ~ E'^[A-Za-z0-9\\s.,?@&()[\\]\\\\|/\'"]+$' 
+        reason ~ '^[A-Za-z0-9\s.,?@&()[\]\\|\/''"]+$' 
         AND LENGTH(reason) >= 5
     ),
     status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (
@@ -25,7 +20,6 @@ CREATE TABLE requests (
     CONSTRAINT unique_active_request UNIQUE (employee_id, asset_type, request_date, is_active)
 );
 
--- Indexes
-CREATE INDEX idx_requests_employee_id ON requests(employee_id);
-CREATE INDEX idx_requests_status ON requests(status);
-CREATE INDEX idx_requests_request_date ON requests(request_date);
+CREATE INDEX IF NOT EXISTS idx_requests_employee_id ON requests(employee_id);
+CREATE INDEX IF NOT EXISTS idx_requests_status ON requests(status);
+CREATE INDEX IF NOT EXISTS idx_requests_request_date ON requests(request_date);
