@@ -13,7 +13,7 @@ CREATE TABLE requests (
         'headphones', 'chair', 'phone', 'tablet'
     )),
     reason TEXT NOT NULL CHECK (
-        reason ~ E'^[A-Za-z0-9\\s.,?@&()[\\]\\\\|/\'"]+$' 
+        reason ~ '^[A-Za-z0-9\s.,?@&()[\]\\|\/''"]+$' 
         AND LENGTH(reason) >= 5
     ),
     status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (
@@ -25,7 +25,7 @@ CREATE TABLE requests (
     CONSTRAINT unique_active_request UNIQUE (employee_id, asset_type, request_date, is_active)
 );
 
--- Indexes
+-- Create index for faster queries
 CREATE INDEX idx_requests_employee_id ON requests(employee_id);
 CREATE INDEX idx_requests_status ON requests(status);
 CREATE INDEX idx_requests_request_date ON requests(request_date);
